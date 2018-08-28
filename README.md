@@ -1,0 +1,1 @@
+# simple_cmake_project_generator_with_tests
