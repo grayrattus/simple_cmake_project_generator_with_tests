@@ -55,9 +55,10 @@ cat > "$project_directory_name/CMakeLists.txt" << EOF
 cmake_minimum_required(VERSION 3.4)
 project(${project_directory_name})
 
-set(SOURCE_FILES "${project_directory_name}/src/${primary_class_name}.cpp")
-add_library(${project_directory_name} ${SOURCE_FILES})
+set(SOURCE_FILES "src/${primary_class_name}.cpp" "${project_entry_file_name}")
+add_library(${project_directory_name} \${SOURCE_FILES})
 target_include_directories(${project_directory_name} PUBLIC \${CMAKE_CURRENT_SOURCE_DIR}/include)
+set_target_properties(${project_directory_name} PROPERTIES LINKER_LANGUAGE CXX)
 
 find_package (Boost 1.58.0 COMPONENTS "unit_test_framework" REQUIRED)
 set(SOURCE_TESTER_FILES ../${test_directory_name}/${test_entry_file_name} ../${test_directory_name}/${test_file_name})
@@ -86,7 +87,7 @@ ${primary_class_name}::${primary_class_name}() {
 ${primary_class_name}::${primary_class_name}(const ${primary_class_name}& orig) {
 }
 string ${primary_class_name}::giveVoice()  {
-	return "Itsworking";
+	return "ItsWorking";
 }
 ${primary_class_name}::~${primary_class_name}() {
 }
@@ -105,7 +106,7 @@ class ${primary_class_name} {
 public:
     ${primary_class_name}();
     string giveVoice();
-    Tester(const ${primary_class_name}& orig);
+    ${primary_class_name}(const ${primary_class_name}& orig);
     virtual ~${primary_class_name}();
 private:
 
@@ -137,8 +138,6 @@ struct MyConfig {
 };
 
 BOOST_GLOBAL_FIXTURE(MyConfig);
-
-#endif
 EOF
 
 echo "Filling ${test_file_name}.cpp"
@@ -148,7 +147,7 @@ cat > $test_directory_name/$test_file_name << EOF
 #include "${primary_class_name}.hpp"
 
 BOOST_AUTO_TEST_CASE(${primary_class_name}ConstructorTest) {
-	Tester* mytest = new Tester();
+	${primary_class_name}* mytest = new ${primary_class_name}();
 	BOOST_CHECK_EQUAL(mytest->giveVoice(), "ItsWorking");
 }
 EOF
